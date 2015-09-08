@@ -166,23 +166,26 @@ for (var i = -sectorRad / 2; i <= Math.PI * 2 - sectorRad / 2; i += step) {
 
 
 var drawTouch = function() {
+var clicked = 0;
 	var start = function(e) {
+	    clicked = 1;
 		ctx.beginPath();
-		x = e.changedTouches[0].pageX- 1;
+		x = e.changedTouches[0].pageX - 1;
 		y = e.changedTouches[0].pageY - 2;
 		ctx.moveTo(x,y);
-		recording = true;
+		ctx.strokeRect(x, y, 1, 1);
 		lastPositionX = e.changedTouches[0].pageX - $("#canvas1").offset().left;
 		lastPositionY = e.changedTouches[0].pageY - $("#canvas1").offset().top;
+		recording = true;
 	};
 	var move = function(e) {
-		
+		if (clicked) {
 		e.preventDefault();
 		x = e.changedTouches[0].pageX - 1;
 		y = e.changedTouches[0].pageY- 2;
 		ctx.lineTo(x,y);
 		ctx.stroke();
-		
+		}
 		if (recording == true) {
 			var msx = (e.changedTouches[0].pageX - $("#canvas1").offset().left);
 			var msy = (e.changedTouches[0].pageY - $("#canvas1").offset().top);
@@ -219,7 +222,7 @@ var drawTouch = function() {
 		data2_s2 += data2_s1 ;
 		data5_s2 += data6_s1 ;
 		data6_s2 += data6_s1 ;
-		console.log(data1_s1 + " " + data2_s1 + " " + data5_s1 + " " + data6_s1);
+		alert(data1_s1 + " " + data2_s1 + " " + data5_s1 + " " + data6_s1);
 		
 	};
     document.getElementById("canvas1").addEventListener("touchstart", start, false);
