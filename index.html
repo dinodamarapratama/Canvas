@@ -3,6 +3,7 @@
 <head>
     <title>Sketch Pad</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+	<script type="text/javascript" src="jquery-1.8.1.min.js"></script>
     <style type="text/css">
 body {
     margin:0px;
@@ -113,137 +114,122 @@ body {
     border:2px dashed #fff;
 }
     </style>
-	<script type="text/javascript">
-	
+
+<script type="text/javascript">
+
+ var data1_s1 = 0;
+ var data1_s2 = 0;
+ var data2_s1 = 0;
+ var data2_s2 = 0;
+ var data5_s1 = 0;
+ var data5_s2 = 0;
+ var data6_s1 = 0;
+ var data6_s2 = 0;
+ 
 var ctx, color = "#000";	
 document.addEventListener( "DOMContentLoaded", function(){
-	// setup a new canvas for drawing wait for device init
     setTimeout(function(){
 	   newCanvas();
     }, 1000);
 }, false );
-// function to setup a new canvas for drawing
+
+
 function newCanvas(){
-	//define and resize canvas
-    document.getElementById("content").style.height = window.innerHeight-90;
-    var canvas = '<canvas id="canvas" width="'+window.innerWidth+'" height="'+(window.innerHeight-90)+'"></canvas>';
-	document.getElementById("content").innerHTML = canvas;
-    
-    // setup canvas
-	ctx=document.getElementById("canvas").getContext("2d");
+    var canvas = '<canvas id="canvas1"  width="' + ($(window).width()) + '" height="' + ($(window).height() - 200) + '" style="border:0px solid #190c00; max-width: 100%;height: auto;background:url(img/board.jpg);background-position: center top; background-size: 100% 100%;background-repeat: no-repeat;" ></canvas>';
+	document.getElementById("canvas").innerHTML = canvas;
+	ctx=document.getElementById("canvas1").getContext("2d");
 	ctx.strokeStyle = color;
 	ctx.lineWidth = 5;	
 	
-	// setup to trigger drawing on mouse or touch
+
     drawTouch();
-    drawPointer();
-	drawMouse();
+
 }
+
+var recording = false;
+var lastPositionX = 0;
+var lastPositionY = 0;
+var moves = new Array;
+var angleArray = new Array;
+var anglesMap = new Array;
+var sectorRad = Math.PI * 2 / 8;
+var step = Math.PI * 2 / 100;
+var sector;
+for (var i = -sectorRad / 2; i <= Math.PI * 2 - sectorRad / 2; i += step) {
+	sector = Math.floor((i + sectorRad / 2) / sectorRad);
+	anglesMap.push(sector);
+}
+
+
         
-function selectColor(el){
-    for(var i=0;i<document.getElementsByClassName("palette").length;i++){
-        document.getElementsByClassName("palette")[i].style.borderColor = "#777";
-        document.getElementsByClassName("palette")[i].style.borderStyle = "solid";
-    }
-    el.style.borderColor = "#fff";
-    el.style.borderStyle = "dashed";
-    color = window.getComputedStyle(el).backgroundColor;
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-}
-// prototype to	start drawing on touch using canvas moveTo and lineTo
+
+
 var drawTouch = function() {
 	var start = function(e) {
+	    e = e.originalEvent;
 		ctx.beginPath();
-		x = e.changedTouches[0].pageX;
-		y = e.changedTouches[0].pageY-44;
+		x = e.changedTouches[0].clientX - 1;
+		y = e.changedTouches[0].clientY - 2;
 		ctx.moveTo(x,y);
+		ctx.strokeRect(x, y, 1, 1);
+		recording = true;
+		lastPositionX = e.changedTouches[0].clientX- $("#canvas1").offset().left;
+		lastPositionY = e.changedTouches[0].clientY - $("#canvas1").offset().top;
 	};
 	var move = function(e) {
-		e.preventDefault();
-		x = e.changedTouches[0].pageX;
-		y = e.changedTouches[0].pageY-44;
+		e = e.originalEvent;
+		x = e.changedTouches[0].clientX - 1;
+		y = e.changedTouches[0].clientY - 2;
 		ctx.lineTo(x,y);
 		ctx.stroke();
-	};
-    document.getElementById("canvas").addEventListener("touchstart", start, false);
-	document.getElementById("canvas").addEventListener("touchmove", move, false);
-}; 
-    
-// prototype to	start drawing on pointer(microsoft ie) using canvas moveTo and lineTo
-var drawPointer = function() {
-	var start = function(e) {
-        e = e.originalEvent;
-		ctx.beginPath();
-		x = e.pageX;
-		y = e.pageY-44;
-		ctx.moveTo(x,y);
-	};
-	var move = function(e) {
-		e.preventDefault();
-        e = e.originalEvent;
-		x = e.pageX;
-		y = e.pageY-44;
-		ctx.lineTo(x,y);
-		ctx.stroke();
-    };
-    document.getElementById("canvas").addEventListener("MSPointerDown", start, false);
-	document.getElementById("canvas").addEventListener("MSPointerMove", move, false);
-};        
-// prototype to	start drawing on mouse using canvas moveTo and lineTo
-var drawMouse = function() {
-	var clicked = 0;
-	var start = function(e) {
-		clicked = 1;
-		ctx.beginPath();
-		x = e.pageX;
-		y = e.pageY-44;
-		ctx.moveTo(x,y);
-	};
-	var move = function(e) {
-		if(clicked){
-			x = e.pageX;
-			y = e.pageY-44;
-			ctx.lineTo(x,y);
-			ctx.stroke();
+		
+		if (recording == true) {
+			var msx = (e.changedTouches[0].clientX - $("#canvas1").offset().left);
+			var msy = (e.changedTouches[0].clientY - $("#canvas1").offset().top);
+			var difx = msx - lastPositionX;
+			var dify = msy - lastPositionY;
+			var sqDist = (difx * difx + dify * dify);
+			var sqPrec = (8 * 8);
+			if (sqDist > sqPrec) {
+
+				lastPositionX = msx;
+				lastPositionY = msy;
+				var angle = Math.atan2(difx, dify) + sectorRad / 2;
+				
+				var angleRound = Math.floor(angle * 100);
+				if (angle < 0) angle += Math.PI * 2;
+				var no = Math.floor(angle / (Math.PI * 2) * 100);
+				moves.push(anglesMap[no]);
+				angleArray.push(angle);
+				data1_s1 = _.first(_.uniq(angleArray)) ;
+				data2_s1 = _.last(_.uniq(angleArray)) ;
+				data5_s1 = angleArray.length ;
+				data6_s1 = _.uniq(moves).length ;
+
+			}
 		}
+		
 	};
 	var stop = function(e) {
-		clicked = 0;
+		e = e.originalEvent;
+		recording = false;
+		lastPositionX = 0;
+		lastPositionY = 0;
+		data1_s2 += data1_s1 ;
+		data2_s2 += data2_s1 ;
+		data5_s2 += data6_s1 ;
+		data6_s2 += data6_s1 ;
+		
 	};
-    document.getElementById("canvas").addEventListener("mousedown", start, false);
-	document.getElementById("canvas").addEventListener("mousemove", move, false);
-	document.addEventListener("mouseup", stop, false);
-};
+    document.getElementById("canvas1").addEventListener("touchstart", start, false);
+	document.getElementById("canvas1").addEventListener("touchmove", move, false);
+	document.getElementById("canvas1").addEventListener("touchend", stop, false);
+}; 
+    
+
 	</script>
 </head>
 <body>
-<div id="page">
-    <div class="header">
-		<a id="new" class="navbtn" onclick="newCanvas()">New</a>
-        <div class="title">Sketch Pad</div>
-    </div>
-    <div id="content"><p style="text-align:center">Loading Canvas...</p></div>
-    <div class="footer">
-		<div class="palette-case">
-			<div class="palette-box">
-				<div class="palette white" onclick="selectColor(this)"></div>
-			</div>	
-			<div class="palette-box">
-				<div class="palette red" onclick="selectColor(this)"></div>
-			</div>
-			<div class="palette-box">
-				<div class="palette blue" onclick="selectColor(this)"></div>
-			</div>
-			<div class="palette-box">
-				<div class="palette green" onclick="selectColor(this)"></div>
-			</div>
-			<div class="palette-box">
-				<div class="palette black" onclick="selectColor(this)"></div>
-			</div>		
-			<div style="clear:both"></div>
-		</div>
-    </div>
-</div> 
+ <div id="canvas" ></div>
 </body>
 </html>
