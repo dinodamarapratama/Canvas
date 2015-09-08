@@ -171,10 +171,9 @@ var drawTouch = function() {
 		x = e.changedTouches[0].clientX - 1;
 		y = e.changedTouches[0].clientY - 2;
 		ctx.moveTo(x,y);
-		ctx.strokeRect(x, y, 1, 1);
-		recording = true;
-		lastPositionX = e.changedTouches[0].clientX- $("#canvas1").offset().left;
-		lastPositionY = e.changedTouches[0].clientY - $("#canvas1").offset().top;
+		//recording = true;
+		//lastPositionX = e.changedTouches[0].clientX- $("#canvas1").offset().left;
+		//lastPositionY = e.changedTouches[0].clientY - $("#canvas1").offset().top;
 	};
 	var move = function(e) {
 		
@@ -182,7 +181,7 @@ var drawTouch = function() {
 		y = e.changedTouches[0].clientY - 2;
 		ctx.lineTo(x,y);
 		ctx.stroke();
-		
+		/*
 		if (recording == true) {
 			var msx = (e.changedTouches[0].clientX - $("#canvas1").offset().left);
 			var msy = (e.changedTouches[0].clientY - $("#canvas1").offset().top);
@@ -208,23 +207,24 @@ var drawTouch = function() {
 
 			}
 		}
-		
+		*/
 	};
 	var stop = function(e) {
 		
 		recording = false;
 		lastPositionX = 0;
 		lastPositionY = 0;
-		data1_s2 += data1_s1 ;
-		data2_s2 += data2_s1 ;
-		data5_s2 += data6_s1 ;
-		data6_s2 += data6_s1 ;
-		console.log(data1_s1 + " " + data2_s1 + " " + data5_s1 + " " + data6_s1);
+		//data1_s2 += data1_s1 ;
+		//data2_s2 += data2_s1 ;
+		//data5_s2 += data6_s1 ;
+		//data6_s2 += data6_s1 ;
+		
 		
 	};
     document.getElementById("canvas1").addEventListener("touchstart", start, false);
 	document.getElementById("canvas1").addEventListener("touchmove", move, false);
 	document.getElementById("canvas1").addEventListener("touchend", stop, false);
+	document.addEventListener("touchend", stop, false);
 }; 
     
 

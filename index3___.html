@@ -154,7 +154,7 @@ function selectColor(el){
 // prototype to	start drawing on touch using canvas moveTo and lineTo
 var drawTouch = function() {
 	var start = function(e) {
-	    console.log(e.changedTouches[0].clientX);
+	    
 		ctx.beginPath();
 		x = e.changedTouches[0].pageX;
 		y = e.changedTouches[0].pageY-44;
