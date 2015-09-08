@@ -177,8 +177,9 @@ var drawTouch = function() {
 	};
 	var move = function(e) {
 		
-		x = e.changedTouches[0].clientX - 1;
-		y = e.changedTouches[0].clientY - 2;
+		e.preventDefault();
+		x = e.changedTouches[0].pageX;
+		y = e.changedTouches[0].pageY-44;
 		ctx.lineTo(x,y);
 		ctx.stroke();
 		/*
