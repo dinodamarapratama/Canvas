@@ -83,7 +83,7 @@ $.fn.drawTouch = function() {
 		recording = true;
 		lastPositionX = e.changedTouches[0].clientX  - $("#canvas1").offset().left;
 		lastPositionY = e.changedTouches[0].clientY  - $("#canvas1").offset().top;
-        alert(lastPositionX + " " + lastPositionY  )
+      
 	};
 
 	var move = function(e) {
@@ -93,11 +93,14 @@ $.fn.drawTouch = function() {
 		y = e.changedTouches[0].pageY - 10;
 		ctx.lineTo(x, y);
 		ctx.stroke();
-
+		alert(x  + " " +  y  )
+       
 
 		if (recording == true) {
 			var msx = (e.changedTouches[0].clientX  - $("#canvas1").offset().left);
 			var msy = (e.changedTouches[0].clientY - $("#canvas1").offset().top);
+			alert(msx  + " " +  msy   )
+			
 			var difx = msx - lastPositionX;
 			var dify = msy - lastPositionY;
 			var sqDist = (difx * difx + dify * dify);
