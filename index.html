@@ -83,7 +83,7 @@ $.fn.drawTouch = function() {
 		recording = true;
 		lastPositionX = e.changedTouches[0].clientX  - $("#canvas1").offset().left;
 		lastPositionY = e.changedTouches[0].clientY  - $("#canvas1").offset().top;
-
+        alert(lastPositionX + " " + lastPositionY  )
 	};
 
 	var move = function(e) {
