@@ -4,6 +4,7 @@
     <title>Sketch Pad</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
 	<script type="text/javascript" src="jquery-1.8.1.min.js"></script>
+	<script type="text/javascript"src="lodash.min.js"></script>
     <style type="text/css">
 body {
     margin:0px;
@@ -166,7 +167,6 @@ for (var i = -sectorRad / 2; i <= Math.PI * 2 - sectorRad / 2; i += step) {
 
 var drawTouch = function() {
 	var start = function(e) {
-	    e = e.originalEvent;
 		ctx.beginPath();
 		x = e.changedTouches[0].clientX - 1;
 		y = e.changedTouches[0].clientY - 2;
@@ -177,7 +177,7 @@ var drawTouch = function() {
 		lastPositionY = e.changedTouches[0].clientY - $("#canvas1").offset().top;
 	};
 	var move = function(e) {
-		e = e.originalEvent;
+		
 		x = e.changedTouches[0].clientX - 1;
 		y = e.changedTouches[0].clientY - 2;
 		ctx.lineTo(x,y);
@@ -211,7 +211,7 @@ var drawTouch = function() {
 		
 	};
 	var stop = function(e) {
-		e = e.originalEvent;
+		
 		recording = false;
 		lastPositionX = 0;
 		lastPositionY = 0;
@@ -219,6 +219,7 @@ var drawTouch = function() {
 		data2_s2 += data2_s1 ;
 		data5_s2 += data6_s1 ;
 		data6_s2 += data6_s1 ;
+		console.log(data1_s1 + " " + data2_s1 + " " + data5_s1 + " " + data6_s1);
 		
 	};
     document.getElementById("canvas1").addEventListener("touchstart", start, false);
